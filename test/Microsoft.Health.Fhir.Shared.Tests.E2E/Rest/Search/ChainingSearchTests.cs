@@ -95,6 +95,20 @@ namespace Microsoft.Health.Fhir.Tests.E2E.Rest.Search
         }
 
         [Fact]
+        public async Task GivenAChainedSearchExpressionOverASimpleParameter_WhenSearchedWithPagingAndSkip_ThenCorrectBundleShouldBeReturned()
+        {
+            string query = $"_tag={Fixture.Tag}&subject:Patient._tag={Fixture.Tag}&_count=2&ct=1";
+
+            Bundle bundle = await Client.SearchAsync(ResourceType.DiagnosticReport, query);
+
+            ValidateBundle(bundle, Fixture.TrumanSnomedDiagnosticReport, Fixture.SmithLoincDiagnosticReport);
+
+            bundle = await Client.SearchAsync(bundle.NextLink.ToString());
+
+            ValidateBundle(bundle, Fixture.TrumanLoincDiagnosticReport);
+        }
+
+        [Fact]
         public async Task GivenAChainedSearchExpressionOverASimpleParameterWithNoResults_WhenSearched_ThenCorrectBundleShouldBeReturned()
         {
             string query = $"_tag={Fixture.Tag}&subject:Patient._type=Observation";
@@ -124,6 +138,16 @@ namespace Microsoft.Health.Fhir.Tests.E2E.Rest.Search
             ValidateBundle(bundle, Fixture.SmithPatient);
 
             bundle = await Client.SearchAsync(bundle.NextLink.ToString());
+
+            ValidateBundle(bundle, Fixture.TrumanPatient);
+        }
+
+        [Fact]
+        public async Task GivenAReverseChainSearchExpressionOverASimpleParameter_WhenSearchedWithPagingAndSkip_ThenCorrectBundleShouldBeReturned()
+        {
+            string query = $"_tag={Fixture.Tag}&_has:Observation:patient:code={Fixture.SnomedCode}&_count=1&ct=1";
+
+            Bundle bundle = await Client.SearchAsync(ResourceType.Patient, query);
 
             ValidateBundle(bundle, Fixture.TrumanPatient);
         }

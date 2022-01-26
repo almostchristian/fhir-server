@@ -22,6 +22,11 @@ namespace Microsoft.Health.Fhir.Core.Features.Search
         {
             try
             {
+                if (int.TryParse(encodedContinuationToken, out _))
+                {
+                    return encodedContinuationToken;
+                }
+
                 byte[] continuationTokenBytes = Convert.FromBase64String(encodedContinuationToken);
 
                 try
@@ -53,6 +58,10 @@ namespace Microsoft.Health.Fhir.Core.Features.Search
         public static string Encode(string continuationToken)
         {
             EnsureArg.IsNotEmptyOrWhiteSpace(continuationToken);
+            if (int.TryParse(continuationToken, out _))
+            {
+                return continuationToken;
+            }
 
             using MemoryStream memoryStream = StreamManager.GetStream();
             using var deflate = new DeflateStream(memoryStream, CompressionLevel.Fastest);
