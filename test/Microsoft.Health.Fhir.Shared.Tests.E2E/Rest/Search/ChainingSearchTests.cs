@@ -95,6 +95,7 @@ namespace Microsoft.Health.Fhir.Tests.E2E.Rest.Search
         }
 
         [Fact]
+        [HttpIntegrationFixtureArgumentSets(dataStores: DataStore.SqlServer)]
         public async Task GivenAChainedSearchExpressionOverASimpleParameter_WhenSearchedWithPagingAndSkip_ThenCorrectBundleShouldBeReturned()
         {
             string query = $"_tag={Fixture.Tag}&subject:Patient._tag={Fixture.Tag}&_count=2&ct=1";
@@ -143,6 +144,7 @@ namespace Microsoft.Health.Fhir.Tests.E2E.Rest.Search
         }
 
         [Fact]
+        [HttpIntegrationFixtureArgumentSets(dataStores: DataStore.SqlServer)]
         public async Task GivenAReverseChainSearchExpressionOverASimpleParameter_WhenSearchedWithPagingAndSkip_ThenCorrectBundleShouldBeReturned()
         {
             string query = $"_tag={Fixture.Tag}&_has:Observation:patient:code={Fixture.SnomedCode}&_count=1&ct=1";
